@@ -3,10 +3,17 @@ const path = require('node:path');
 require("dotenv").config();
 
 // Require the necessary discord.js classes
-const { Client, Collection, GatewayIntentBits } = require('discord.js');
+const { Client, Collection, GatewayIntentBits, Partials } = require('discord.js');
 
 // Create a new client instance
-const client = new Client({ intents: [GatewayIntentBits.Guilds] });
+const client = new Client({ intents: [
+  GatewayIntentBits.Guilds,
+  GatewayIntentBits.GuildMessages,
+  GatewayIntentBits.MessageContent,
+  GatewayIntentBits.GuildMembers,
+  ],
+  partials: [Partials.Channel],
+});
 
 client.commands = new Collection();
 
@@ -27,6 +34,12 @@ for (const file of commandFiles) {
 // When the client is ready, run this code (only once)
 client.once('ready', () => {
   console.log('Ready!');
+});
+
+client.on('messageCreate', (message) => {
+  if (message.content === 'hello') {
+    message.reply(`Hello!`)
+  }
 });
 
 client.on('interactionCreate', async interaction => {
